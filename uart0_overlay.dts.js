@@ -19,7 +19,7 @@
         __overlay__ {
             uart0_pins: uart0_pins {
                 brcm,pins = <25 27>;
-                brcm,function = <2 2>; /* ALT5 for UART0 TX/RX */
+                brcm,function = <4 4>; /* ALT4 for UART0 TX/RX */
                 brcm,pull = <2>; /* Pull-up */
             };
         };
