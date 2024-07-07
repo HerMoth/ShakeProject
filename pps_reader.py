@@ -1,7 +1,7 @@
 import pigpio
 import time
 
-pps_pin = 37
+pps_pin = 25
 
 # Callback function to be called when a PPS signal is detected
 def callback(gpio, level, tick):
