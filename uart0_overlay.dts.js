@@ -18,8 +18,8 @@
         target = <&gpio>;
         __overlay__ {
             uart0_pins: uart0_pins {
-                brcm,pins = <25 27>;
-                brcm,function = <4 4>; /* ALT4 for UART0 TX/RX */
+                brcm,pins = <16 20>; /* GPIO 14, 15 */
+                brcm,function = <4 4>; /* ALT4 for UART0 TX/RX */ 
                 brcm,pull = <2>; /* Pull-up */
             };
         };
