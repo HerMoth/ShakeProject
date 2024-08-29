@@ -15,8 +15,8 @@ while True:
         report = session.next()
         
         # Process the TPV (Time-Position-Velocity) report
-        if report['class'] == 'TPV':
-            utc_time_str = report.get('time', 'n/a')
+        if report.get('class') == 'TPV':
+            utc_time_str = getattr(report, 'time', 'n/a')
             if utc_time_str != 'n/a':
                 utc_time_obj = datetime.strptime(utc_time_str, "%Y-%m-%dT%H:%M:%S.%fZ")
                 utc_time = utc_time_obj.strftime("%Y-%m-%d %H:%M:%S")
@@ -26,40 +26,40 @@ while True:
                 utc_time = 'n/a'
                 local_time_str = 'n/a'
             
-            lat = report.get('lat', 'n/a')
-            lon = report.get('lon', 'n/a')
-            alt = report.get('alt', 'n/a')
-            speed = report.get('speed', 'n/a')
-            track = report.get('track', 'n/a')
-            climb = report.get('climb', 'n/a')
-            mode = report.get('mode', 'n/a')
-            ept = report.get('ept', 'n/a')
-            epv = report.get('epv', 'n/a')
+            lat = getattr(report, 'lat', 'n/a')
+            lon = getattr(report, 'lon', 'n/a')
+            alt = getattr(report, 'alt', 'n/a')
+            speed = getattr(report, 'speed', 'n/a')
+            track = getattr(report, 'track', 'n/a')
+            climb = getattr(report, 'climb', 'n/a')
+            mode = getattr(report, 'mode', 'n/a')
+            ept = getattr(report, 'ept', 'n/a')
+            epv = getattr(report, 'epv', 'n/a')
             grid = 'EN50vc'  # Assuming a static grid square for this example
             
             # Print the TPV data
             print("┌───────────────────────────────────────────┐")
-            print("│    UTC Time:   {}                   │".format(utc_time))
-            print("│    Local Time: {}                   │".format(local_time_str))
-            print("│    Latitude:   {}                   │".format(lat))
-            print("│    Longitude:  {}                   │".format(lon))
-            print("│    Altitude:   {} m                 │".format(alt))
-            print("│    Speed:      {} kph               │".format(speed))
-            print("│    Heading:    {} deg (true)        │".format(track))
-            print("│    Climb:      {} m/min             │".format(climb))
-            print("│    Status:     {} ({:.3f} secs)    │".format('3D FIX' if mode == 3 else '2D FIX' if mode == 2 else 'NO FIX', ept))
+            print(f"│    UTC Time:   {utc_time}                   │")
+            print(f"│    Local Time: {local_time_str}                   │")
+            print(f"│    Latitude:   {lat}                   │")
+            print(f"│    Longitude:  {lon}                   │")
+            print(f"│    Altitude:   {alt} m                 │")
+            print(f"│    Speed:      {speed} kph               │")
+            print(f"│    Heading:    {track} deg (true)        │")
+            print(f"│    Climb:      {climb} m/min             │")
+            print(f"│    Status:     {'3D FIX' if mode == 3 else '2D FIX' if mode == 2 else 'NO FIX'} ({ept:.3f} secs)    │")
             print("│    Longitude Err:   n/a                │")
             print("│    Latitude Err:    n/a                │")
-            print("│    Altitude Err:    +/- {} m        │".format(epv))
+            print(f"│    Altitude Err:    +/- {epv} m        │")
             print("│    Course Err:      n/a                │")
             print("│    Speed Err:       n/a                │")
-            print("│    Time offset:     {:.3f}              │".format(ept))
-            print("│    Grid Square:     {}             │".format(grid))
+            print(f"│    Time offset:     {ept:.3f}              │")
+            print(f"│    Grid Square:     {grid}             │")
             print("└───────────────────────────────────────────┘")
         
         # Process the SKY report for satellite information
-        elif report['class'] == 'SKY':
-            satellites = report.get('satellites', [])
+        elif report.get('class') == 'SKY':
+            satellites = getattr(report, 'satellites', [])
             print("┌─────────────────────────────────┐")
             print("│PRN:   Elev:  Azim:  SNR:  Used: │")
             for sat in satellites:
@@ -68,7 +68,7 @@ while True:
                 azim = sat.get('az', 'n/a')
                 snr = sat.get('ss', 'n/a')
                 used = 'Y' if sat.get('used', False) else 'N'
-                print("│ {: >3}    {: >2}    {: >3}    {: >2}      {}   │".format(prn, elev, azim, snr, used))
+                print(f"│ {prn: >3}    {elev: >2}    {azim: >3}    {snr: >2}      {used}   │")
             print("└─────────────────────────────────┘")
         
         time.sleep(1)
@@ -80,3 +80,5 @@ while True:
     except StopIteration:
         session = None
         print("GPSD has terminated")
+    except Exception as e:
+        print(f"Unexpected error: {e}")
